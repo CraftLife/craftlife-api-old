@@ -18,7 +18,7 @@ import { PassportModule } from "@nestjs/passport";
       useFactory: () => {
         return {
           secret: process.env.JWT_SECRET,
-          signOptions: { expiresIn: '1d', algorithm: 'RS256' },
+          signOptions: { expiresIn: '1d' },
         }
       }
       
