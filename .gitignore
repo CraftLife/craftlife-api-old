@@ -35,6 +35,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 dev.env
-yarn.lock
 private.key
 public.key
