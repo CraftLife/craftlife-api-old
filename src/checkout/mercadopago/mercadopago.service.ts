@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { MercadopagoPayment, MercadopagoResponse } from "./mercadopago.interface";
+import { MercadopagoResponse } from "./mercadopago.interface";
 import * as mercadopago from 'mercadopago';
-import { Payment } from "src/model/postgres/payment.model";
+import { MerchantOrder } from "src/model/postgres/merchant-orders.model";
 
 @Injectable()
 export class MercadopagoService {
@@ -12,42 +12,35 @@ export class MercadopagoService {
     })
   }
 
-  async createPayment(payment: MercadopagoPayment) {
-    let response: MercadopagoResponse;
-
+  async createPreference(preference: Object): Promise<number> {
+    let response: MercadopagoResponse; 
+    
     try {
-      response = (await mercadopago.payment.save({
-        ...payment,
-        statement_descriptor: 'CraftLife',
-      })).body;
+      response = (await mercadopago.preferences.create(preference)).body
     } catch {
-      throw new BadRequestException('Verifique os dados de pagamento e tente novamente');
+      throw new BadRequestException('Ocorreu um erro ao criar a sua preferência');
     }
-    if (response.status === 'rejected') {
-      throw new BadRequestException('O seu pagamento não foi aceito');
-    }
-    return {
-      id: response.id,
-      resource: response.transaction_details && response.transaction_details.external_resource_url,
-      barcode: response.barcode && response.barcode.content,
-      qr_code: response.point_of_interaction && response.point_of_interaction.transaction_data 
-        && response.point_of_interaction.transaction_data.qr_code,
-      qr_code_base64: response.point_of_interaction && response.point_of_interaction.transaction_data
-        && response.point_of_interaction.transaction_data.qr_code_base64,
-    };
+
+    console.log(response)
+    return response.id;
   }
 
-  async getPayment(id: number): Promise<Payment>{
-    const bodyResponse = (await mercadopago.payment.get(id)).body;
-    return {
-      id: bodyResponse.id,
-      username: bodyResponse.metadata.username,
-      transaction_amount: bodyResponse.transaction_amount,
-      package_id: bodyResponse.metadata.product_id,
-      status: bodyResponse.status,
-      payment_method_id: bodyResponse.payment_method_id,
-      installments: bodyResponse.installments,
-      external_reference: bodyResponse.external_reference,
-    };
+  async getMerchantOrder(merchantOrderId: number): Promise<MerchantOrder> {
+    return (await mercadopago.merchant_orders.findById(merchantOrderId)).body;
   }
+
+  // async getPayment(id: number): Promise<Payment>{
+  //   const bodyResponse = (await mercadopago.payment.get(id)).body;
+  //   return {
+  //     id: bodyResponse.id,
+  //     username: bodyResponse.metadata.username,
+  //     transaction_amount: bodyResponse.transaction_amount,
+  //     package_id: bodyResponse.metadata.product_id,
+  //     status: bodyResponse.status,
+  //     payment_method_id: bodyResponse.payment_method_id,
+  //     installments: bodyResponse.installments,
+  //     external_reference: bodyResponse.external_reference,
+  //   };
+  // }
+  
 }

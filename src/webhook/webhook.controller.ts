@@ -1,6 +1,5 @@
-import { Body, Controller, Post, Request, Response } from "@nestjs/common";
+import { Controller, Post, Query, Request, Response } from "@nestjs/common";
 
-import { MercadopagoWebhook } from "src/checkout/mercadopago/mercadopago.interface";
 import { WebhookService } from "./webhook.service";
 
 @Controller('webhook')
@@ -10,10 +9,17 @@ export class WebhookController {
     private readonly webhookService: WebhookService,
   ) {}
 
-  @Post('mercadopago/payment')
-  async mercadopagoPayment(@Request() request, @Response() response, @Body() body: MercadopagoWebhook) {
-    this.webhookService.mercadopagoPayment(body);
-    response.status(200).send('ok');
+  @Post('mercadopago')
+  async mercadopagoWebhook(@Response() response, @Query() query) {
+    switch(query.topic) {
+      case 'payment':
+        // return await this.webhookService.handlePayment(query.id); //TODO
+      case 'merchant_order':
+        await this.webhookService.handleMerchantOrder(query.id);
+        return response.status(200).send(); 
+      default:
+        response.status(400).send('Invalid topic');
+    }
   }
 
 }

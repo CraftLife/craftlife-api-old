@@ -48,16 +48,6 @@ export interface MercadopagoTransactionData {
 }
 
 export interface MercadopagoWebhook {
-  action: string,
-  api_version: string,
-  data: MercadopagoWebhookData,
-  date_created: string,
-  id: number,
-  live_mode: boolean,
-  type: string,
-  user_id: string,
-}
-
-export interface MercadopagoWebhookData {
-  id: number;
+  resource?: string,
+  topic?: string,
 }

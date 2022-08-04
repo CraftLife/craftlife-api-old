@@ -5,7 +5,6 @@ import { AuthModule } from './auth/auth.module';
 import { CheckoutModule } from './checkout/checkout.module';
 import { MYSQL_CONNECTION } from './constants';
 import { EmailModule } from './email/email.module';
-import { PaymentModule } from './payment/payment.module';
 import { ProductModule } from './product/product.module';
 import { PunishmentModule } from './punishment/punishment.module';
 import { ServerModule } from './server/server.module';
@@ -21,7 +20,6 @@ import { WebhookModule } from './webhook/webhook.module';
     EmailModule,
     WebhookModule,
     ServerModule,
-    PaymentModule,
     PunishmentModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
