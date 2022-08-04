@@ -39,7 +39,7 @@ export class MerchantOrder {
   @Column()
   delivered?: boolean;
 
-  itens: any[];
+  items: any[];
 
   additional_info: string;
 }

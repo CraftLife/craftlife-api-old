@@ -8,7 +8,7 @@ export class TebexService {
   private readonly logger = new Logger(TebexService.name);
 
   async deliveryItens(merchantOrder: MerchantOrder): Promise<void> {
-    const packages = merchantOrder.itens.map(item => {
+    const packages = merchantOrder.items.map(item => {
       return {
         id: +item.id,
         options: {},
@@ -17,13 +17,13 @@ export class TebexService {
     await Axios.post('https://plugin.tebex.io/payments', {
       packages,
       price: +merchantOrder.paid_amount,
-      ign: +merchantOrder.additional_info,
+      ign: merchantOrder.additional_info,
       note: `Pagamento via site. MP: ${merchantOrder.id}`,
     }, {
       headers: {
         'X-Tebex-Secret': process.env.TEBEX_SECRET,
       },
-    });
+    })
     this.logger.log(`Tebex: itens delivered for order ${merchantOrder.id}`);
   }
 
