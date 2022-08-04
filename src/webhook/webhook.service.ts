@@ -19,7 +19,10 @@ export class WebhookService {
 
   async handleMerchantOrder(id: number) {
     let merchantOrder: MerchantOrder = await this.merchantOrderRepository.findOne(id);
+    let delivered;
+
     if (merchantOrder) {
+      delivered = merchantOrder.delivered;
       merchantOrder = await this.mercadopagoService.getMerchantOrder(id);
       await this.updateMerchantOrder(merchantOrder);
     } else {
@@ -27,12 +30,12 @@ export class WebhookService {
       await this.merchantOrderRepository.save(merchantOrder);
       this.logger.log(`Merchant order ${id} created`);
     }
-    if (merchantOrder.order_status === 'paid' && !merchantOrder.delivered) {
-      this.logger.log(`Merchant order ${id} paid`);
-      merchantOrder = await this.mercadopagoService.getMerchantOrder(id);
-      await this.tebexService.deliveryItens(merchantOrder);
-      merchantOrder.delivered = true;
-      await this.updateMerchantOrder(merchantOrder);
+    if (merchantOrder.order_status === 'paid' && !delivered) {
+      // this.logger.log(`Merchant order ${id} paid`);
+      // merchantOrder = await this.mercadopagoService.getMerchantOrder(id);
+      // await this.tebexService.deliveryItens(merchantOrder);
+      // merchantOrder.delivered = true;
+      // await this.updateMerchantOrder(merchantOrder);
     }
     return merchantOrder;
   }
