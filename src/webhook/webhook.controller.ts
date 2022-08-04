@@ -14,6 +14,7 @@ export class WebhookController {
     switch(query.topic) {
       case 'payment':
         // return await this.webhookService.handlePayment(query.id); //TODO
+        break;
       case 'merchant_order':
         await this.webhookService.handleMerchantOrder(query.id);
         return response.status(200).send(); 
